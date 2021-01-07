@@ -2,8 +2,8 @@ import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import Title from '../components/Title';
 import { Alert, Row, Col, Card, List, Divider } from 'antd';
-import { dagen, activiteiten } from '../data';
-import { Link } from 'gatsby';
+import { dagen, activiteiten, locked } from '../data';
+import { Link, navigateTo } from 'gatsby';
 import moment from 'moment';
 import 'moment/locale/nl';
 import ActiviteitModel from '../models/activiteit';
@@ -16,6 +16,7 @@ import '../sass/index.scss';
 
 const Inschrijven: FunctionComponent = () => {
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    const auth = useSelector(state => state.auth.auth);
 
     const [done, setDone] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -37,6 +38,10 @@ const Inschrijven: FunctionComponent = () => {
             });
         }
     });
+
+    if (locked && !(isLoggedIn && auth && auth.admin)) {
+        navigateTo('/onderhoud');
+    }
 
     return (
         <Layout>
@@ -82,76 +87,80 @@ const Inschrijven: FunctionComponent = () => {
                         style={{ marginBottom: '20px' }}
                     />
                     <Row gutter={16}>
-                        {dagen.map((dag, index) => {
-                            const dagActiviteiten = activiteiten.filter(
-                                activiteit => activiteit.dag.id === dag.id
-                            );
+                        {dagen
+                            .filter(dag => !('hidden' in dag) || !dag.hidden)
+                            .map((dag, index) => {
+                                const dagActiviteiten = activiteiten.filter(
+                                    activiteit => activiteit.dag.id === dag.id
+                                );
 
-                            return (
-                                <Col
-                                    span={8}
-                                    key={index}
-                                    xs={24}
-                                    sm={24}
-                                    md={24}
-                                    lg={8}
-                                    style={{
-                                        opacity:
-                                            Date.now() < moment(dag.datum, 'DD-MM-YYYY').valueOf()
-                                                ? 1.0
-                                                : 0.3,
-                                        pointerEvents:
-                                            Date.now() < moment(dag.datum, 'DD-MM-YYYY').valueOf()
-                                                ? 'auto'
-                                                : 'none'
-                                    }}
-                                >
-                                    <Card
-                                        title={
-                                            <Row>
-                                                <Col span={8}>
-                                                    Dag {dag.id}
-                                                    <br />
-                                                    <span style={{ fontSize: '10px' }}>
-                                                        {dag.beschrijving}
-                                                    </span>
-                                                </Col>
-                                                <Col span={16} style={{ textAlign: 'right' }}>
-                                                    {moment(dag.datum, 'DD-MM-YYYY')
-                                                        .locale('nl')
-                                                        .format('D MMMM YYYY')}
-                                                    <br />
-                                                    <span style={{ fontSize: '10px' }}>
-                                                        {dag.startTijd} - {dag.eindTijd}
-                                                    </span>
-                                                </Col>
-                                            </Row>
-                                        }
-                                        bordered={false}
+                                return (
+                                    <Col
+                                        span={8}
+                                        key={index}
+                                        xs={24}
+                                        sm={24}
+                                        md={24}
+                                        lg={8}
+                                        style={{
+                                            opacity:
+                                                Date.now() <
+                                                moment(dag.datum, 'DD-MM-YYYY').valueOf()
+                                                    ? 1.0
+                                                    : 0.3,
+                                            pointerEvents:
+                                                Date.now() <
+                                                moment(dag.datum, 'DD-MM-YYYY').valueOf()
+                                                    ? 'auto'
+                                                    : 'none'
+                                        }}
                                     >
-                                        <List
-                                            itemLayout="horizontal"
-                                            dataSource={dagActiviteiten}
-                                            renderItem={(
-                                                activiteit: ActiviteitModel,
-                                                activiteitIndex: number
-                                            ) => (
-                                                <Fragment>
-                                                    <Activiteit
-                                                        data={activiteit}
-                                                        fetching={!done}
-                                                    />
-                                                    {activiteitIndex <
-                                                        dagActiviteiten.length - 1 && (
-                                                        <Divider style={{ margin: '15px' }} />
-                                                    )}
-                                                </Fragment>
-                                            )}
-                                        />
-                                    </Card>
-                                </Col>
-                            );
-                        })}
+                                        <Card
+                                            title={
+                                                <Row>
+                                                    <Col span={8}>
+                                                        {dag.titel}
+                                                        <br />
+                                                        <span style={{ fontSize: '10px' }}>
+                                                            {dag.beschrijving}
+                                                        </span>
+                                                    </Col>
+                                                    <Col span={16} style={{ textAlign: 'right' }}>
+                                                        {moment(dag.datum, 'DD-MM-YYYY')
+                                                            .locale('nl')
+                                                            .format('D MMMM YYYY')}
+                                                        <br />
+                                                        <span style={{ fontSize: '10px' }}>
+                                                            {dag.startTijd} - {dag.eindTijd}
+                                                        </span>
+                                                    </Col>
+                                                </Row>
+                                            }
+                                            bordered={false}
+                                        >
+                                            <List
+                                                itemLayout="horizontal"
+                                                dataSource={dagActiviteiten}
+                                                renderItem={(
+                                                    activiteit: ActiviteitModel,
+                                                    activiteitIndex: number
+                                                ) => (
+                                                    <Fragment>
+                                                        <Activiteit
+                                                            data={activiteit}
+                                                            fetching={!done}
+                                                        />
+                                                        {activiteitIndex <
+                                                            dagActiviteiten.length - 1 && (
+                                                            <Divider style={{ margin: '15px' }} />
+                                                        )}
+                                                    </Fragment>
+                                                )}
+                                            />
+                                        </Card>
+                                    </Col>
+                                );
+                            })}
                     </Row>
                 </div>
             </div>

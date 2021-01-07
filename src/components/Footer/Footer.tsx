@@ -3,7 +3,7 @@
 import React, { FunctionComponent, Fragment } from 'react';
 import ExternalLink from '../ExternalLink';
 import { Row, Col, Divider } from 'antd';
-import Favicon from '../../images/favicon.png';
+import Favicon from '../../images/favicon_v2.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Map from 'pigeon-maps';
 import Marker from 'pigeon-marker';
@@ -54,7 +54,7 @@ const Footer: FunctionComponent = () => (
     <Fragment>
         <Divider />
         <Row>
-            <Col span={6} offset={1}>
+            <Col span={6} offset={1} xs={24} sm={24} md={6} lg={6} xl={6}>
                 <div>
                     <img
                         width="32"
@@ -96,7 +96,7 @@ const Footer: FunctionComponent = () => (
                     </Row>
                 </div>
             </Col>
-            <Col span={6} offset={2}>
+            <Col span={6} offset={2} xs={24} sm={24} md={6} lg={6} xl={6}>
                 <Map center={position} zoom={15} height={200}>
                     <Marker
                         anchor={position}
@@ -105,7 +105,7 @@ const Footer: FunctionComponent = () => (
                     />
                 </Map>
             </Col>
-            <Col span={6} offset={3}>
+            <Col span={6} offset={3} xs={24} sm={24} md={6} lg={6} xl={6}>
                 <h2>Contact</h2>
                 <div>
                     Atheneum College Hageveld

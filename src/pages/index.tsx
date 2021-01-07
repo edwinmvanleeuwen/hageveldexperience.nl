@@ -1,9 +1,10 @@
 import React, { FunctionComponent, Fragment } from 'react';
 import Layout from '../components/Layout';
 import { Row, Col, Button, Carousel, Icon } from 'antd';
-import { Link } from 'gatsby';
+import { Link, navigateTo } from 'gatsby';
 import Title from '../components/Title';
 import { useSelector } from '../hooks';
+import { locked } from '../data';
 
 import Hageveld from '../images/hageveld_front.jpg';
 import Kluisjes from '../images/1_kluisjes.jpg';
@@ -15,6 +16,11 @@ import '../sass/index.scss';
 
 const Index: FunctionComponent<any> = () => {
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+    const auth = useSelector(state => state.auth.auth);
+
+    if (locked && !(isLoggedIn && auth && auth.admin)) {
+        navigateTo('/onderhoud');
+    }
 
     return (
         <Layout>
@@ -39,11 +45,18 @@ const Index: FunctionComponent<any> = () => {
                         </div>
                     </Carousel>
                     <div>
-                        De data van de Hageveld Experience voor het schooljaar 2019-2020 zijn:
+                        De data van de Hageveld Experience Regulier voor het schooljaar 2020-2021
+                        zijn:
                         <br />
                         <br />
-                        woensdag 20 november 2019, 27 november 2019 en 8 januari 2020 van 14.00
+                        woensdag 18 november 2020, 25 november 2020 en 13 januari 2021 van 14.00
                         -15.30 uur.
+                        <br />
+                        <br />
+                        De data van de Hageveld Experience VIA voor het schooljaar 2020-2021 zijn:
+                        <br />
+                        <br />
+                        woensdag 2 december 2020 en 13 januari 2021 van 14.00 -16.00 uur.
                     </div>
                 </Col>
                 <Col span={12}>
